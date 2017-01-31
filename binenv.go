@@ -7,8 +7,31 @@ import (
 
 type ENV map[string]string
 
-func Load(asset func(string) ([]byte, error)) (envMap map[string]string, err error) {
-	data, err := asset(".env")
+func Load(asset func(string) ([]byte, error), envList ...string) (envMap map[string]string, err error) {
+	if len(envList) == 0 {
+		return loadEnv(asset, ".env")
+	}
+
+	envMap, err = loadEnv(asset, envList[0])
+	if err != nil {
+		return nil, err
+	}
+
+	for _, env := range envList[1:] {
+		tmp, err := loadEnv(asset, env)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range tmp {
+			envMap[k] = v
+		}
+	}
+
+	return envMap, err
+}
+
+func loadEnv(asset func(string) ([]byte, error), path string) (envMap map[string]string, err error) {
+	data, err := asset(path)
 	if err != nil {
 		return nil, err
 	}

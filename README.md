@@ -39,3 +39,15 @@ func main() {
 	fmt.Printf("%s", env["DATA"])
 }
 ```
+
+Use multiple env files
+
+```go
+env, err := binenv.Load(Asset, ".env", "./foo/.env", "./bar/.env")
+if err != nil {
+	fmt.Println(err)
+}
+fmt.Printf("%#v\n", env)
+fmt.Printf("%s", env["DATA"])
+
+```
